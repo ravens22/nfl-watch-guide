@@ -559,7 +559,7 @@ function render(){
   // subtitle
   const gen=new Date(DATA.generatedAt);
   document.getElementById("subtitle").textContent =
-    "最終更新: "+gen.toLocaleString("ja-JP",{timeZone:"Asia/Tokyo"})+" (JST) ・ 更新: 土日月火 15:00";
+    "最終更新: "+gen.toLocaleString("ja-JP",{timeZone:"Asia/Tokyo"})+" (JST) ・ 更新: 毎日 14:00";
 
   // season buttons: current first, past grouped
   const cur=DATA.currentSeason;

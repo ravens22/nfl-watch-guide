@@ -1,11 +1,10 @@
 name: NFL 観戦ガイド更新
 
-# 土日月火 15:00 JST に自動更新。
-# GitHub の cron は UTC 基準なので 15:00 JST = 06:00 UTC。
-# 曜日: 6=土, 0=日, 1=月, 2=火(JST の 15 時は UTC でも同じ曜日)。
+# 毎日 14:00 JST に自動更新。
+# GitHub の cron は UTC 基準なので 14:00 JST = 05:00 UTC。
 on:
   schedule:
-    - cron: "0 6 * * 6,0,1,2"
+    - cron: "0 5 * * *"
   workflow_dispatch:        # 手動実行も可能(Actions タブの Run workflow)
 
 # 生成物(index.html / data/)をリポジトリに書き戻すため書き込み権限を付与
