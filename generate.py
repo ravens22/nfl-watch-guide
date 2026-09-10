@@ -344,9 +344,10 @@ def phase_weeks(seasontype):
 def collect_season(year, max_workers=8, verbose=True, live=None):
     """1シーズン分を集めて {phase: {...}} を返す。確定済みはキャッシュから。
 
-    「進行中の週」を隠す方法として、ESPN の現在週ポインタ(不安定・端境期に
-    リセットされる)には依存せず、**その週の全試合が FINAL になった週だけを採用**する。
-    これにより進行中の週は自然に非表示となり、完了した週だけが安定して表示される。
+    表示方針: **終了(STATUS_FINAL)した試合を1つずつ採用**する。
+    週の全試合が揃うのを待たず、終わった試合から順に表示される。
+    進行中・予定の試合は結果が出ないため除外(レビュー・採点ができないため)。
+    ESPN の現在週ポインタ(不安定・端境期にリセットされる)には依存しない。
     (live 引数は後方互換のため受け取るが、除外には使用しない)
     """
     cache = load_cache(year)  # id -> analyzed dict
@@ -357,11 +358,10 @@ def collect_season(year, max_workers=8, verbose=True, live=None):
             evs = scoreboard_events(year, st, wk)
             if not evs:
                 continue  # まだ試合が組まれていない週
-            statuses = [e.get("status", {}).get("type", {}).get("name") for e in evs]
-            # 週内に1つでも未確定があれば、その週はまだ「進行中」なので丸ごと隠す
-            if not all(s == "STATUS_FINAL" for s in statuses):
-                continue
             for ev in evs:
+                status = ev.get("status", {}).get("type", {}).get("name")
+                if status != "STATUS_FINAL":
+                    continue  # 終わった試合だけ(進行中/予定は除外)
                 jobs.append((st, wk, ev))
 
     to_fetch = [(st, wk, ev) for (st, wk, ev) in jobs if ev["id"] not in cache]
